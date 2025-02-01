@@ -174,6 +174,33 @@ document.addEventListener('click', function(event) {
     }
 });
 
+
+// Функция для отображения вопросов на странице
+function displayQuestions(questions) {
+    const container = document.createElement('div');
+    container.id = 'questions-container';
+    container.innerHTML = '<h2>Все вопросы:</h2>';
+
+    questions.forEach((question, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question-item';
+        questionDiv.innerHTML = `
+            <p><strong>Вопрос ${index + 1}:</strong> ${question.text}</p>
+            <ul>
+                ${question.options.map((option, i) => `
+                    <li>${option} ${i === question.correctAnswerIndex ? '(Правильный ответ)' : ''}</li>
+                `).join('')}
+            </ul>
+        `;
+        container.appendChild(questionDiv);
+    });
+
+    // Добавляем новый контейнер на страницу
+    document.body.appendChild(container);
+}
+
+
+
 // Обработчик для кнопки "Библиотека"
 document.addEventListener('click', function(event) {
     if (event.target.id === 'show-library-button') {
@@ -200,47 +227,95 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Функция для отображения вопросов на странице
-function displayQuestions(questions) {
-    const container = document.createElement('div');
-    container.id = 'questions-container';
-    container.innerHTML = '<h2>Все вопросы:</h2>';
-
-    questions.forEach((question, index) => {
-        const questionDiv = document.createElement('div');
-        questionDiv.className = 'question-item';
-        questionDiv.innerHTML = `
-            <p><strong>Вопрос ${index + 1}:</strong> ${question.text}</p>
-            <ul>
-                ${question.options.map((option, i) => `
-                    <li>${option} ${i === question.correctAnswerIndex ? '(Правильный ответ)' : ''}</li>
-                `).join('')}
-            </ul>
-        `;
-        container.appendChild(questionDiv);
-    });
-
-    // Добавляем новый контейнер на страницу
-    document.body.appendChild(container);
-}
 
 // Функция для отображения заголовков тем
 function displayTopics(titles) {
     const container = document.createElement('div');
     container.id = 'topics-container';
-    container.innerHTML = '<h2>Заголовки тем:</h2>';
+    container.innerHTML = '';
 
-    // Создаем список заголовков
-    const topicsList = document.createElement('ul');
-    topicsList.id = 'topics-list';
+    // Создаем контейнер для карточек тем
+    const topicsGrid = document.createElement('div');
+    topicsGrid.style.display = 'grid'; // Используем CSS Grid для расположения карточек
+    topicsGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(200px, 1fr))'; // Адаптивные колонки
+    topicsGrid.style.gap = '20px'; // Отступы между карточками
+    topicsGrid.style.padding = '20px'; // Отступы внутри контейнера
 
     titles.forEach((title, index) => {
-        const topicItem = document.createElement('li');
-        topicItem.innerHTML = `<strong>Тема ${index + 1}:</strong> ${title}`;
-        topicsList.appendChild(topicItem);
+        // Создаем карточку для темы
+        const topicCard = document.createElement('div');
+        topicCard.style.border = '1px solid #ccc'; // Рамка карточки
+        topicCard.style.borderRadius = '10px'; // Закругленные углы
+        topicCard.style.padding = '15px'; // Отступы внутри карточки
+        topicCard.style.display = 'flex'; // Используем flexbox
+        topicCard.style.flexDirection = 'column'; // Вертикальное расположение элементов
+        topicCard.style.justifyContent = 'space-between'; // Распределение пространства между элементами
+        topicCard.style.backgroundColor = '#f9f9f9'; // Фон карточки
+        topicCard.style.height = '150px'; // Фиксированная высота карточки (можно изменить)
+
+        // Название темы
+        const topicTitle = document.createElement('h3');
+        topicTitle.textContent = title; // Название темы
+        topicTitle.style.margin = '0 0 10px 0'; // Отступ снизу
+        topicTitle.style.fontSize = '18px'; // Размер шрифта
+
+        // Большая кнопка
+        const topicButton = document.createElement('button');
+        topicButton.textContent = 'Перейти к теме'; // Текст кнопки
+        topicButton.style.width = '100%'; // Ширина кнопки
+        topicButton.style.padding = '10px'; // Отступы внутри кнопки
+        topicButton.style.fontSize = '16px'; // Размер шрифта
+        topicButton.style.backgroundColor = '#007bff'; // Цвет фона кнопки
+        topicButton.style.color = '#fff'; // Цвет текста кнопки
+        topicButton.style.border = 'none'; // Убираем рамку
+        topicButton.style.borderRadius = '5px'; // Закругленные углы
+        topicButton.style.cursor = 'pointer'; // Курсор-указатель
+        topicButton.addEventListener('click', () => loadTopicContent(index + 1)); // Обработчик клика
+
+        // Добавляем название и кнопку в карточку
+        topicCard.appendChild(topicTitle);
+        topicCard.appendChild(topicButton);
+
+        // Добавляем карточку в контейнер
+        topicsGrid.appendChild(topicCard);
     });
 
-    container.appendChild(topicsList);
+    container.appendChild(topicsGrid);
+
+    // Добавляем новый контейнер на страницу
+    document.body.appendChild(container);
+}
+// Функция для загрузки содержимого темы
+function loadTopicContent(topicId) {
+    // Очищаем старые контейнеры
+    clearContainers();
+
+    // Отправляем запрос на сервер для получения содержимого темы
+    fetch(`/api/topics/${topicId}`)
+        .then(response => response.json())
+        .then(topicContent => {
+            // Отображаем содержимое темы на странице
+            displayTopicContent(topicContent);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при загрузке содержимого темы.');
+        });
+}
+
+// Функция для отображения содержимого темы
+function displayTopicContent(topicContent) {
+    const container = document.createElement('div');
+    container.id = 'topic-content-container';
+    container.className = 'topic-content-container'; // Добавляем класс для стилизации
+    container.innerHTML = '';
+
+    // Отображаем содержимое темы
+    const contentDiv = document.createElement('div');
+    contentDiv.innerHTML = `
+        <p> ${topicContent.content}</p>
+    `;
+    container.appendChild(contentDiv);
 
     // Добавляем новый контейнер на страницу
     document.body.appendChild(container);
@@ -250,7 +325,8 @@ function displayTopics(titles) {
 function clearContainers() {
     const containers = [
         'questions-container',
-        'topics-container'
+        'topics-container',
+        'topic-content-container'
     ];
 
     containers.forEach(id => {

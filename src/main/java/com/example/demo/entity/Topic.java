@@ -1,10 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Bean;
 
-import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Table(name="topic")

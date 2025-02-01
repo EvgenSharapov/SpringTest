@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
+    background-color: #dedee9;
 }
 
 header {
@@ -154,4 +154,35 @@ header {
 
 .create-button:hover {
     background-color: #0056b3;
+}
+
+/* Добавьте эти стили в ваш CSS-файл или в <style> в HTML */
+.topic-content-container {
+    width: 40%;
+
+    border: 1px solid #ccc; /* Тонкая рамка */
+    border-radius: 10px; /* Закругленные края */
+    padding: 40px; /* Отступы внутри контейнера */
+    margin: 40px 40px; /* Отступы снаружи контейнера */
+    background-color: #f9f9f9; /* Легкий фон для контраста */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Легкая тень для объема */
+}
+
+/* Стили для блока кода */
+pre {
+    background-color: #f4f4f4; /* Светлый фон */
+    border: 1px solid #ccc; /* Тонкая рамка */
+    border-radius: 8px; /* Закругленные углы */
+    padding: 15px; /* Отступы внутри блока */
+    font-size: 14px; /* Размер шрифта */
+    font-family: "Courier New", monospace; /* Моноширинный шрифт */
+    overflow-x: auto; /* Горизонтальная прокрутка, если код слишком широкий */
+    margin: 20px 0; /* Отступы снаружи */
+    line-height: 1.5; /* Межстрочный интервал */
+}
+
+code {
+    color: #d63384; /* Цвет текста кода */
+    background-color: transparent; /* Прозрачный фон */
+    padding: 0; /* Убираем внутренние отступы */
 }
